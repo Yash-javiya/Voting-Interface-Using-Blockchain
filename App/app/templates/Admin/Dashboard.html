@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% if message %}
+<div class="alert alert-danger">{{ message }}</div>
+{% endif %}
+<div class="row no-gutter justify-content-center align-items-center">
+    <div class="col no-gutter border">
+        <!-- statectics -->
+    </div>
+    <div class="col no-gutter border">
+        <!-- admin details -->
+        <div class="row no-gutter">
+            <div class="col no-gutter">
+                <button class="btn btn-success m-2">Button 1</button>
+            </div>
+            <div class="col no-gutter">
+                <button class="btn btn-success m-2">Button 2</button>
+            </div>
+        </div>
+        <div class="row no-gutter">
+            <div class="col no-gutter">
+                <button class="btn btn-success m-2">Button 3</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
+
+{% block script %} {% endblock script %}
