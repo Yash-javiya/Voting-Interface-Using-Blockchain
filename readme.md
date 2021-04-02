@@ -1,6 +1,6 @@
-#heading 1 voting interface using blockchain
+# voting interface using blockchain
 
-#Heading 1 Windows:
+## Windows:
 1) run app.bat given in App folder.
 2) run netroek.bat given in Server folder.
 NOTE: make sure that sarver start properly.
@@ -12,7 +12,7 @@ NOTE: make sure that sarver start properly.
    
 5) enjoy the app!!...
 
-#heading 2 Other:
+## Other:
 1) run command given in terminal
         '''py run.py''' 
 2) run commands in sparate terminal
