@@ -1,25 +1,30 @@
-voting interface using blockchain
+#heading 1 voting interface using blockchain
 
-Windows:
+#Heading 1 Windows:
 1) run app.bat given in App folder.
 2) run netroek.bat given in Server folder.
 NOTE: make sure that sarver start properly.
 3) now go to http://127.0.0.1:5000/
 4) credencials :
-    Userid: test
-    Password: 123
+|Email|Password|
+|-----|--------|
+|test|123|
+   
 5) enjoy the app!!...
 
-other:
+#heading 2 Other:
 1) run command given in terminal
-        py run.py 
+        '''py run.py''' 
 2) run commands in sparate terminal
+    '''
     set FLASK_APP=network.py
     set FLASK_DEBUG=1
     flask run --port 8000
+    '''
 NOTE: make sure that sarver start properly.
 3) now go to http://127.0.0.1:5000/
 4) credencials :
-    Userid: test
-    Password: 123
+|Email|Password|
+|-----|--------|
+|test|123|
 5) enjoy the app!!...
