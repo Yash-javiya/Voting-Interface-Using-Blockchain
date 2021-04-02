@@ -1,4 +1,4 @@
-# voting interface using blockchain
+# Voting Interface Using Blockchain
 
 ## Windows:
 1) run app.bat given in App folder.
