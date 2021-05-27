@@ -1,7 +1,6 @@
 # Voting Interface Using Blockchain
 ## Windows
 
-=======
 ## Install Requirements:
 `pip install -r requirements.txt`
 
