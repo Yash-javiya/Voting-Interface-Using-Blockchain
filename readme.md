@@ -1,11 +1,19 @@
 # Voting Interface Using Blockchain
+## Windows
 
+<<<<<<< HEAD
 ## Install Requirements
 
 `pip install -r requirements.txt`
 
 ## Windows
 
+=======
+## Install Requirements:
+`pip install -r requirements.txt`
+
+## Windows:
+>>>>>>> 99de461869007e472d65c5bcaea6a7bcc9ac5455
 1) run app.bat given in App folder.
 2) run server.bat given in Server folder.
 
