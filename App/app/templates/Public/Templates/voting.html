@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block navbar %}
+{% endblock navbar %}
+
+{% block body %}
+<div class="row m-0 no-gutter justify-content-center align-items-center">
+    <div class="col-md-6 no-gutter">
+        {% if message %}
+        <div class="alert alert-danger">{{ message }}</div>
+        {% endif %}
+        <form action="/regvote" method="POST">
+            <div class="form-group">
+                <label>
+                    <h1>Reg Vote</h1>
+                </label>
+                <hr />
+            </div>
+            <div class="form-group">
+                <b>Name:</b> {{ Voter.Name }}
+            </div>
+            <div class="form-group">
+                <b>Voter Id:</b> {{ Voter.Id}}
+            </div>
+
+            <div class="form-group">
+                <table class="table table-bordered">
+                    <tr>
+                        <b>
+                            <th scope="col">Sr no.</th>
+                            <th scope="col">Candidate Name</th>
+                            <th scope="col">Party Symbol</th>
+                            <th scope="col"></th>
+                        </b>
+                    </tr>
+                    {% for candidate in candidates %}
+                    <tr>
+                        <th scope="row">{{ candidate.No }}</th>
+                        <td>{{ candidate.CandidateName }}</td>
+                        <td>{{ candidate.Symbol }}</td>
+                        <td>
+                            <button type="submit" class="btn btn-success btn-icon-split" name="voteBtn"
+                                value="{{ candidate.PartyName }}">Vote</button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock body %}
+
+{% block script %} {% endblock script %}

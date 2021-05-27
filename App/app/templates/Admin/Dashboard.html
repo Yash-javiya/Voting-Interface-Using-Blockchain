@@ -1,26 +1,87 @@
-{% extends 'base.html' %}
+{% extends 'Base.html' %}
+
+{% block sidebar_brand%}
+<a class="sidebar-brand d-flex align-items-center justify-content-center" href="/admin">
+    <div class=" mx-3">
+        {% if title %}
+        {{ title }}
+        {% else %}
+        Voting Interface
+        {% endif %}
+    </div>
+</a>
+{% endblock sidebar_brand%}
+
+{% block Topbar %}
+<nav class="navbar navbar-expand navbar-dark bg-primary topbar mb-4 static-top shadow"></nav>
+{% endblock Topbar %}
+
+{%block nav_sec_0%}
+<li class="nav-item active ">
+    <a class="nav-link" href="/admin">
+        <i class="fas fa-fw fa-tachometer-alt"></i>
+        <span>Dashboard</span></a>
+</li>
+{%endblock nav_sec_0%}
+
+{% block nav_item_1 %}
+<li class="nav-item">
+    <a class="nav-link collapsed" href="/admin/election">
+        <i class="fas fa-vote-yea"></i>
+        <span>Election</span>
+    </a>
+</li>
+{% endblock nav_item_1 %}
+
+{% block nav_item_3 %}
+<li class="nav-item">
+    <a class="nav-link collapsed" href="/admin/action">
+        <i class="fas fa-user-cog"></i>
+        <span>Actions</span>
+    </a>
+</li>
+{% endblock nav_item_3 %}
+
+{% block nav_sec_1 %}
+{% endblock nav_sec_1 %}
+{% block nav_item_2 %}
+{% endblock nav_item_2 %}
+{% block nav_sec_2 %}
+{% endblock nav_sec_2 %}
+{% block nav_item_4 %}
+{% endblock nav_item_4 %}
+{% block nav_item_5 %}
+{% endblock nav_item_5 %}
 
 {% block body %}
-{% if message %}
-<div class="alert alert-danger">{{ message }}</div>
-{% endif %}
-<div class="row no-gutter justify-content-center align-items-center">
-    <div class="col no-gutter border">
-        <!-- statectics -->
-    </div>
-    <div class="col no-gutter border">
-        <!-- admin details -->
-        <div class="row no-gutter">
-            <div class="col no-gutter">
-                <button class="btn btn-success m-2">Button 1</button>
-            </div>
-            <div class="col no-gutter">
-                <button class="btn btn-success m-2">Button 2</button>
-            </div>
-        </div>
-        <div class="row no-gutter">
-            <div class="col no-gutter">
-                <button class="btn btn-success m-2">Button 3</button>
+
+<div class="row justify-content-center">
+
+    <div class="col-xl-10 col-lg-12 col-md-9">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row ">
+                    <div class="col-lg-6 d-none d-lg-block bg-dashboard-image"></div>
+                    <div class="col-lg-6">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h3 text-gray-900 mb-4">Election</h1>
+                            </div>
+                            <div class="text-dark">
+                                <h3 class="h5 mb-4">Total Voters:</h3>
+                                <h5 class="h6 mb-4">{{data["total_voters"]}}</h5>
+                            </div>
+                            <hr />
+                            <div class="text-dark">
+                                <h3 class="h5 mb-4">Total Voted:</h3>
+                                <h5 class="h6 mb-4">{{data["total_vote_dropped"]}}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -28,4 +89,6 @@
 
 {% endblock body %}
 
-{% block script %} {% endblock script %}
+
+{% block script %}
+{% endblock script %}

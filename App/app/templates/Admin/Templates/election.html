@@ -1,0 +1,72 @@
+{% extends 'Admin/Dashboard.html'%}
+
+{%block nav_sec_0%}
+<li class="nav-item">
+    <a class="nav-link" href="/admin">
+        <i class="fas fa-fw fa-tachometer-alt"></i>
+        <span>Dashboard</span></a>
+</li>
+{%endblock nav_sec_0%}
+
+{% block nav_item_1 %}
+<li class="nav-item active">
+    <a class="nav-link collapsed" href="/admin/election">
+        <i class="fas fa-vote-yea"></i>
+        <span>Election</span>
+    </a>
+</li>
+{% endblock nav_item_1 %}
+
+{% block body %}
+<div class="row justify-content-center">
+
+    <div class="col-xl-10 col-lg-12 col-md-9">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row ">
+                    <div class="col-lg-6 d-none d-lg-block bg-election-image"></div>
+                    <div class="col-lg-6">
+                        <div class="p-5">
+                            <div class="text-center">
+                                <h1 class="h3 text-gray-900 mb-4">Election</h1>
+                            </div>
+                            <div class="text-dark">
+                                <h3 class="h5 mb-4">Total Voters: {{data["total_voters"]}}
+                                </h3>
+
+                            </div>
+                            <hr />
+                            <div class="text-dark">
+                                <h3 class="h5 mb-4">Total Voted: {{data["total_vote_dropped"]}}
+                                </h3>
+
+                            </div>
+                            <hr />
+                            <div class="text-dark">
+                                <h3 class="h5 mb-4">Election Status: {{data['state']}}
+
+                                </h3>
+
+                            </div>
+                            <form>
+                                <button formaction="{{ data['button']['url'] }}"
+                                    class="btn btn-{{ data['button']['type'] }} btn-icon-split" formmethod="POST">
+                                    <span class=" icon text-center text-white-50">
+                                        <i class="fas fa-check"> </i>
+                                    </span>
+                                    <span class="text">{{ data['button']['value'] }}</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}
+
+{% block script %} {% endblock script %}

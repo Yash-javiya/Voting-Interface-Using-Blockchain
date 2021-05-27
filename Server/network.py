@@ -3,10 +3,12 @@ import time
 from hashlib import sha256
 
 import requests
-from flask import Flask, redirect, request, url_for, json
+from flask import Flask, redirect, request, url_for, json, Response
 
-from blockchain import Block, Blockchain
-from db import login, register
+# from blockchain import Block, Blockchain
+from db import login, register, view, get_voter, voted, get_all_voters, get_all_candidate, get_candidate_key, get_private_key, get_candidate
+from Web3 import Manager, Action, Function
+
 
 app = Flask(__name__)
 
@@ -20,216 +22,219 @@ def home():
 
 @app.route('/login', methods=['POST'])
 def loginUser():
-    data = {}
     if request.method == "POST":
-        user = request.form.get('username')
-        password = request.form.get('password')
-        # print("user= "+user+" Password= "+password+".")
-        code = login(user, password)
-        print('login status: {}'.format(code))
-        return redirect(('{}/login/{}').format(CONNECTED_ADDRESS, code))
+        function = Function()
+        if function.state() == 1:
+            user = request.form.get('username')
+            password = request.form.get('password')
+
+            status, message = login(user, password)
+
+            data = {'status': status,
+                    'message': message}
+        elif function.state() == 0:
+            data = {'status': False,
+                    'message': 'Election not started Yet!!!'}
+        elif function.state() == 2:
+            data = {'status': False,
+                    'message': 'Election Over!!!'}
+
+        return Response(json.dumps(data))
     else:
         return 403
 
 
-@ app.route("/addUser", methods=['POST'])
+@ app.route("/registerUser", methods=['POST'])
 def registerUser():
     if request.method == "POST":
         user = request.form.get('username')
         password = request.form.get('password')
-        # print("user= "+user+" Password= "+password+".")
-        code = register(user, password)
-        return redirect(('{}/reg/{}').format(CONNECTED_ADDRESS, code))
+
+        status, message = register(user, password)
+
+        data = {'status': status,
+                'message': message}
+
+        return Response(json.dumps(data))
     else:
         return 403
 
 
-# the node's copy of blockchain
-blockchain = Blockchain()
-blockchain.create_genesis_block()
-
-# the address to other participating members of the network
-peers = set()
-
-# endpoint to submit a new transaction. This will be used by
-# our application to add new data (posts) to the blockchain
-
-
-@ app.route('/new_transaction', methods=['POST'])
-def new_transaction():
-    tx_data = request.get_json()
-    required_fields = ['voterName', 'voterId',
-                       'candidateName', 'candidateParty']
-
-    for field in required_fields:
-        if not tx_data.get(field):
-            return "Invalid transaction data", 404
-
-    tx_data["timestamp"] = time.time()
-    print(tx_data)
-    blockchain.add_new_transaction(tx_data)
-
-    return "Success", 201
-
-
-# endpoint to return the node's copy of the chain.
-# Our application will be using this endpoint to query
-# all the posts to display.
-@ app.route('/chain', methods=['GET'])
-def get_chain():
-    chain_data = []
-    for block in blockchain.chain:
-        chain_data.append(block.__dict__)
-    return json.dumps({"length": len(chain_data),
-                       "chain": chain_data,
-                       "peers": list(peers)})
-
-
-# endpoint to request the node to mine the unconfirmed
-# transactions (if any). We'll be using it to initiate
-# a command to mine from our application itself.
-@ app.route('/mine', methods=['GET'])
-def mine_unconfirmed_transactions():
-    result = blockchain.mine()
-    if not result:
-        return "No transactions to mine"
+@ app.route("/view_data", methods=['POST'])
+def view_data():
+    if request.method == "POST":
+        Table_name = request.form.get('table_name')
+        data = view(Table_name)
+        return Response(json.dumps(data))
     else:
-        # Making sure we have the longest chain before announcing to the network
-        chain_length = len(blockchain.chain)
-        consensus()
-        if chain_length == len(blockchain.chain):
-            # announce the recently mined block to the network
-            announce_new_block(blockchain.last_block)
-            print("Block #{} is mined.".format(blockchain.last_block.index))
-            # print("Block Hash is : {} ".format(blockchain.last_block.hash))
-            print(blockchain.last_block)
-        return redirect('{}/dashboard'.format(CONNECTED_ADDRESS))
+        return 403
 
 
-# endpoint to add new peers to the network.
-@ app.route('/register_node', methods=['POST'])
-def register_new_peers():
-    node_address = request.get_json()["node_address"]
-    if not node_address:
-        return "Invalid data", 400
-
-    # Add the node to the peer list
-    peers.add(node_address)
-
-    # Return the consensus blockchain to the newly registered node
-    # so that he can sync
-    return get_chain()
-
-
-@ app.route('/register_with', methods=['POST'])
-def register_with_existing_node():
-
-    node_address = request.get_json()["node_address"]
-    if not node_address:
-        return "Invalid data", 400
-
-    data = {"node_address": request.host_url}
-    headers = {'Content-Type': "application/json"}
-
-    # Make a request to register with remote node and obtain information
-    response = requests.post(node_address + "/register_node",
-                             data=json.dumps(data), headers=headers)
-
-    if response.status_code == 200:
-        global blockchain
-        global peers
-        # update chain and the peers
-        chain_dump = response.json()['chain']
-        blockchain = create_chain_from_dump(chain_dump)
-        peers.update(response.json()['peers'])
-        return "Registration successful", 200
+@ app.route("/fetch_voter", methods=['POST'])
+def fetch_voter():
+    if request.method == "POST":
+        username = request.form.get('username')
+        data = get_voter(username)
+        return Response(json.dumps(data))
     else:
-        # if something goes wrong, pass it on to the API response
-        return response.content, response.status_code
+        return 403
 
 
-def create_chain_from_dump(chain_dump):
-    generated_blockchain = Blockchain()
-    generated_blockchain.create_genesis_block()
-    for idx, block_data in enumerate(chain_dump):
-        if idx == 0:
-            continue  # skip genesis block
-        block = Block(block_data["index"],
-                      block_data["transactions"],
-                      block_data["timestamp"],
-                      block_data["previous_hash"],
-                      block_data["nonce"])
-        proof = block_data['hash']
-        added = generated_blockchain.add_block(block, proof)
-        if not added:
-            raise Exception("The chain dump is tampered!!")
-    return generated_blockchain
+@app.route("/fetch_voters", methods=['POST'])
+def fetch_voters():
+    if request.method == "POST":
+        data = get_all_voters()
+        return Response(json.dumps(data))
+    else:
+        return 403
 
 
-# endpoint to add a block mined by someone else to
-# the node's chain. The block is first verified by the node
-# and then added to the chain.
-@ app.route('/add_block', methods=['POST'])
-def verify_and_add_block():
-    block_data = request.get_json()
-    block = Block(block_data["index"],
-                  block_data["transactions"],
-                  block_data["timestamp"],
-                  block_data["previous_hash"],
-                  block_data["nonce"])
-
-    proof = block_data['hash']
-    added = blockchain.add_block(block, proof)
-
-    if not added:
-        return "The block was discarded by the node", 400
-
-    return "Block added to the chain", 201
+@app.route("/genrate_voter_id", methods=['POST'])
+def genrate_voter_id():
+    if request.method == "POST":
+        username = request.form.get('username')
+        action = Action()
+        data = action.voter_generate_id(username)
+        return Response(json.dumps(data))
+    else:
+        return 403
 
 
-# endpoint to query unconfirmed transactions
-@ app.route('/pending_tx')
-def get_pending_tx():
-    return json.dumps(blockchain.unconfirmed_transactions)
+@app.route("/genrate_candidate_id", methods=['POST'])
+def genrate_candidate_id():
+    if request.method == "POST":
+        username = request.form.get('username')
+        action = Action()
+        data = action.candidate_generate_id(username)
+        return Response(json.dumps(data))
+    else:
+        return 403
 
 
-def consensus():
-    """
-    Our naive consnsus algorithm. If a longer valid chain is
-    found, our chain is replaced with it.
-    """
-    global blockchain
-
-    longest_chain = None
-    current_len = len(blockchain.chain)
-
-    for node in peers:
-        response = requests.get('{}chain'.format(node))
-        length = response.json()['length']
-        chain = response.json()['chain']
-        if length > current_len and blockchain.check_chain_validity(chain):
-            current_len = length
-            longest_chain = chain
-
-    if longest_chain:
-        blockchain = longest_chain
-        return True
-
-    return False
+@app.route("/add_voter", methods=['POST'])
+def add_voter():
+    if request.method == "POST":
+        username = request.form.get('username')
+        action = Action()
+        data = action.voter_add_to_eth_net(username)
+        return Response(json.dumps(data))
+    else:
+        return 403
 
 
-def announce_new_block(block):
-    """
-    A function to announce to the network once a block has been mined.
-    Other blocks can simply verify the proof of work and add it to their
-    respective chains.
-    """
-    for peer in peers:
-        url = "{}add_block".format(peer)
-        headers = {'Content-Type': "application/json"}
-        requests.post(url,
-                      data=json.dumps(block.__dict__, sort_keys=True),
-                      headers=headers)
+@app.route("/add_candidate", methods=['POST'])
+def add_candidate():
+    if request.method == "POST":
+        username = request.form.get('username')
+        action = Action()
+        data = action.candidate_add_to_eth_net(username)
+        return Response(json.dumps(data))
+    else:
+        return 403
+
+
+@app.route("/update_voter", methods=['POST'])
+def update_voter():
+    if request.method == "POST":
+        return 200
+    else:
+        return 403
+
+
+@app.route("/update_candidate", methods=['POST'])
+def update_candidate():
+    if request.method == "POST":
+        return 200
+    else:
+        return 403
+
+
+@app.route("/delete_voter", methods=['POST'])
+def delete_voter():
+    if request.method == "POST":
+        return 200
+    else:
+        return 403
+
+
+@app.route("/delete_candidate", methods=['POST'])
+def delete_candidate():
+    if request.method == "POST":
+        return 200
+    else:
+        return 403
+
+
+@app.route("/get_election_data", methods=['POST'])
+def get_election_data():
+    if request.method == "POST":
+        function = Function()
+
+        if function.state() == 0:
+            state = 'Election Not Started'
+        elif function.state() == 1:
+            state = 'Election Running'
+        elif function.state() == 2:
+            state = 'Election Ended'
+        else:
+            state = ''
+
+        total_voters = function.total_voter()
+
+        total_vote_dropped = function.vote_dropped()
+
+        data = {
+            'total_voters': total_voters,
+            'total_vote_dropped': total_vote_dropped,
+            'state': state
+        }
+        return Response(json.dumps(data))
+    else:
+        return 403
+
+
+@app.route("/start_election", methods=['POST'])
+def start_election():
+    manager = Manager()
+    manager.start_vote()
+    message = 'Election Started'
+    return Response(json.dumps(message))
+
+
+@ app.route("/end_election", methods=['POST'])
+def end_election():
+    manager = Manager()
+    manager.end_vote()
+    message = 'Election Ended'
+    return Response(json.dumps(message))
+
+
+@app.route("/do_voting", methods=['POST'])
+def do_voting():
+    if request.method == "POST":
+        manager = Manager()
+        candidate_name = request.form.get('candidateName')
+        address = get_candidate_key(candidate_name)
+        data = manager.do_vote(address)
+        return Response(json.dumps(data))
+    else:
+        return 403
+
+
+@app.route("/show_result", methods=['POST'])
+def show_result():
+    if request.method == "POST":
+        manager = Manager()
+        data = manager.get_result()
+        address = data['_candidate']
+        if hex(int(address, base=16)) == hex(0):
+            message = 'No Candidate Won!!!'
+        else:
+            message = get_candidate(address) + 'Won !!!'
+
+        return Response(json.dumps(message))
+    else:
+        return 403
 
 
 # Uncomment this line if you want to specify the port number in the code

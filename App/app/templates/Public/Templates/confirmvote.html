@@ -1,0 +1,88 @@
+{% extends 'Base.html' %}
+
+{% block sidebar %}
+{% endblock sidebar%}
+
+{% block Topbar %}
+<nav class="navbar navbar-expand navbar-dark bg-primary topbar mb-4 static-top shadow">
+    <a class="navbar-brand d-flex align-items-center justify-content-center" href="/">
+        <div class=" mx-3">
+            {% if title %}
+            {{ title }}
+            {% else %}
+            Voting Interface
+            {% endif %}
+        </div>
+    </a>
+</nav>
+{% endblock Topbar %}
+
+{% block body %}
+<div class="row justify-content-center">
+
+    <div class="col-xl-10 col-lg-12 col-md-9">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row ">
+                    <div class="col-lg-6 d-none d-lg-block bg-image">
+                        <img src={{ url_for('static', filename = candidate["File_name"]) }}
+                            alt="{{ candidate['Political_party'] }}" height="500vh" width="500vw">
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="p-5">
+                            <form action="/submit" name="voter" method="POST">
+                                <div class="form-group">
+                                    <label>
+                                        <h1>Confirm Vote</h1>
+                                    </label>
+                                    <hr />
+                                </div>
+                                <div class="form-group">
+                                    <label for="voterName"><b>Name:</b></label>
+                                    <input type="text" id="voterName" name="voterName" class="form-control"
+                                        placeholder="{{ Voter['2']['Username'] }}" value="{{ Voter['2']['Username'] }}"
+                                        readonly="readonly" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="voterId"><b>Voter Id:</b></label>
+                                    <input type="text" id="voterId" name="voterId" class="form-control"
+                                        placeholder="{{ Voter['2']['ID'] }}" value="{{ Voter['2']['ID'] }}"
+                                        readonly="readonly" />
+                                </div>
+
+
+                                <div class="form-group">
+                                    <input type="hidden" id="candidateName" name="candidateName" class="form-control"
+                                        value="{{candidate.Candidate_name}}" readonly="readonly" />
+                                    <input type="hidden" id="candidateParty" name="candidateParty" class="form-control"
+                                        value="{{candidate.Political_party}}" readonly="readonly" />
+                                </div>
+                                <div class="card w-85">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Candidate: {{ candidate.Candidate_name }}</h5>
+                                        <h6 class="card-subtitle mb-2 text-muted">Party Name:
+                                            {{ candidate.Political_party }}
+                                        </h6>
+                                    </div>
+                                    <div class="card-footer text-right">
+                                        <a href="/change" class="card-link">chnage</a>
+                                        <button type="submit"
+                                            class="btn btn-success btn-icon-spilt">Confirm</button></a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock body %}
+
+{% block script %} {% endblock script %}

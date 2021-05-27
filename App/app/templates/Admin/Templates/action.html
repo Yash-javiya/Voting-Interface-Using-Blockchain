@@ -1,0 +1,207 @@
+{% extends 'Admin/Dashboard.html'%}
+
+{%block nav_sec_0%}
+<li class="nav-item">
+    <a class="nav-link" href="/admin">
+        <i class="fas fa-fw fa-tachometer-alt"></i>
+        <span>Dashboard</span></a>
+</li>
+{%endblock nav_sec_0%}
+
+{% block nav_item_3 %}
+<li class="nav-item active">
+    <a class="nav-link collapsed" href="/admin/action">
+        <i class="fas fa-user-cog"></i>
+        <span>Actions</span>
+    </a>
+</li>
+{% endblock nav_item_3 %}
+
+{% block body %}
+
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Actions</h1>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Voters</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>User Name</th>
+                            <th>Voted</th>
+                            <th>Admin</th>
+                            <th>Etereum Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <!-- <tfoot>
+                        <tr>
+                            <th>Id</th>
+                            <th>User Name</th>
+                            <th>Voted</th>
+                            <th>Admin</th>
+                            <th>Etereum Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </tfoot> -->
+                    <tbody>
+
+                        {% for i in range(1,(voters|length)+1 )%}
+                        <tr>
+                            <th>{{ voters["{}".format(i)]["ID"] }}</th>
+                            <td>{{ voters["{}".format(i)]["Username"] }}</td>
+                            <td>
+                                {%if voters['{}'.format(i)]['is_voted'] == 'True'%}
+                                Yes
+                                {% else %}
+                                No
+                                {% endif %}
+                            </td>
+                            <td>
+                                {%if voters['{}'.format(i)]['is_admin'] == 'True'%}
+                                Yes
+                                {% else %}
+                                No
+                                {% endif %}
+                            </td>
+                            <td>{{ voters['{}'.format(i)]['Public_key'] }}</td>
+                            <td>
+                                <form>
+                                    <button name="voter" formaction="/admin/genrate/voter" formmethod="POST"
+                                        class="btn btn-secondary btn-icon-split"
+                                        value='{{ voters["{}".format(i)]["Username"] }}'>
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-sync"></i>
+                                        </span>
+                                        <span class="text">Genrate</span>
+                                    </button>
+                                    <button name="voter" formaction="/admin/add/voter" formmethod="POST"
+                                        class="btn btn-primary btn-icon-split"
+                                        value='{{ voters["{}".format(i)]["Username"] }}'>
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span class="text">Add</span>
+                                    </button>
+                                    <button name="voter" formaction="/admin/update/voter" formmethod="POST"
+                                        class="btn btn-success btn-icon-split"
+                                        value='{{ voters["{}".format(i)]["Username"] }}'>
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-pen"></i>
+                                        </span>
+                                        <span class="text">Update</span>
+                                    </button>
+                                    <button name="voter" formaction="/admin/delete/voter" formmethod="POST"
+                                        class="btn btn-danger btn-icon-split"
+                                        value='{{ voters["{}".format(i)]["Username"] }}'>
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                        <span class="text">Delete</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Candidate</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Candidate Name</th>
+                            <th>Political Party</th>
+                            <th>Etereum Address</th>
+                            <th>Party Symbol</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <!-- <tfoot>
+                        <tr>
+                            <th>Id</th>
+                            <th>Candidate Name</th>
+                            <th>Political Party</th>
+                            <th>Etereum Address</th>
+                            <th>Party Symbol</th>
+                            <th>Actions</th>
+                        </tr>
+                    </tfoot> -->
+                    <tbody>
+                        {% for i in range(1,5)%}
+                        <tr>
+                            <th>{{ candidates["{}".format(i)]["ID"] }}</th>
+                            <td>{{ candidates["{}".format(i)]["Candidate_name"] }}</td>
+                            <td>{{ candidates['{}'.format(i)]['Political_party'] }}</td>
+                            <td>{{ candidates['{}'.format(i)]['Public_key'] }}</td>
+                            <td>
+                                <img src={{ url_for('static', filename = candidates["{}".format(i)]["File_name"]) }}
+                                    alt="{{ candidates['{}'.format(i)]['Political_party'] }}" height="100px"
+                                    width="100px">
+                            </td>
+                            <td>
+                                <form>
+                                    <button name="candidate" formaction="/admin/genrate/candidate" formmethod="POST"
+                                        class="btn btn-secondary btn-icon-split"
+                                        value='{{ candidates["{}".format(i)]["Candidate_name"] }}'>
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-sync"></i>
+                                        </span>
+                                        <span class="text">Genrate</span>
+                                    </button>
+                                    <button formaction="/admin/add/candidate" formmethod="POST" name="candidate"
+                                        class="btn btn-primary btn-icon-split"
+                                        value='{{ candidates["{}".format(i)]["Candidate_name"] }}'>
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-plus"></i>
+                                        </span>
+                                        <span class="text">Add</span>
+                                    </button>
+                                    <button formaction="/admin/update/candidate" formmethod="POST" name="candidate"
+                                        class="btn btn-success btn-icon-split"
+                                        value='{{ candidates["{}".format(i)]["Candidate_name"] }}'>
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-pen"></i>
+                                        </span>
+                                        <span class="text">Update</span>
+                                    </button>
+                                    <button formaction="/admin/delete/candidate" formmethod="POST" name="candidate"
+                                        class="btn btn-danger btn-icon-split"
+                                        value='{{ candidates["{}".format(i)]["Candidate_name"] }}'>
+                                        <span class="icon text-white-50">
+                                            <i class="fas fa-trash"></i>
+                                        </span>
+                                        <span class="text">Delete</span>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock body %}
+
+{% block script %} {% endblock script %}

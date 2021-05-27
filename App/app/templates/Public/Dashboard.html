@@ -1,0 +1,89 @@
+{% extends 'Base.html' %}
+
+{% block sidebar %}
+{% endblock sidebar%}
+
+{% block Topbar %}
+<nav class="navbar navbar-expand navbar-dark bg-primary topbar mb-4 static-top shadow">
+    <a class="navbar-brand d-flex align-items-center justify-content-center" href="/">
+        <div class=" mx-3">
+            {% if title %}
+            {{ title }}
+            {% else %}
+            Voting Interface
+            {% endif %}
+        </div>
+    </a>
+</nav>
+{% endblock Topbar %}
+
+{% block body %}
+<div class="row justify-content-center">
+
+    <div class="col-xl-10 col-lg-12 col-md-9">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+            <div class="card-body p-0">
+                <!-- Nested Row within Card Body -->
+                <div class="row ">
+                    <div class="col-lg-6 d-none d-lg-block bg-reg-image"></div>
+                    <div class="col-lg-6">
+                        <div class="p-5">
+                            <form action="/regvote" method="POST">
+                                <div class="form-group">
+                                    <label>
+                                        <h1>Voting</h1>
+                                    </label>
+                                    <hr />
+                                </div>
+                                <div class="form-group">
+                                    <b>Name:</b> {{ Voter['2']["Username"] }}
+                                </div>
+                                <div class="form-group">
+                                    <b>Voter Id:</b> {{ Voter['2']["ID"]}}
+                                </div>
+
+                                <div class="form-group text-center align-middle">
+                                    <table class="table align-middle table-bordered">
+                                        <tr>
+                                            <b>
+                                                <th scope="col">Sr no.</th>
+                                                <th scope="col">Candidate Name</th>
+                                                <th scope="col">Party Symbol</th>
+                                                <th scope="col"></th>
+                                            </b>
+                                        </tr>
+                                        {% for i in range(1,5)%}
+                                        <tr>
+                                            <th scope="row">
+                                                <h3 class="h4 text-center">{{ candidates["{}".format(i)]["ID"] }}</h3>
+                                            </th>
+                                            <td>{{ candidates["{}".format(i)]["Candidate_name"] }}</td>
+                                            <td>
+                                                <img src={{ url_for('static', filename = candidates["{}".format(i)]["File_name"]) }}
+                                                    alt="{{ candidates['{}'.format(i)]['Political_party'] }}"
+                                                    height="100px" width="100px">
+                                            </td>
+                                            <td>
+                                                <button type="submit" class="btn btn-success btn-circle btn-lg"
+                                                    name="voteBtn"
+                                                    value="{{ candidates['{}'.format(i)]['Political_party'] }}">Vote</button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </table>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock body %}
+
+{% block script %} {% endblock script %}

@@ -1,0 +1,4 @@
+*.zip
+__pycache__
+templates_2
+temp_w3.py
